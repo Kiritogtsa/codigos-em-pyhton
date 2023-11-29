@@ -1,106 +1,61 @@
-class JogoDaVelha:
-  """
-  Representa um jogo da velha.
-  """
+def jogar():
+    jogador_atual = "x"
+    tabuleiro = [['', '', ''], ['', '', ''], ['', '', '']]
 
-  def __init__(self):
-    self.tabuleiro = self.matrix()
-    self.jogadoratual = "X"
+    while True:
+        desenhar_tabuleiro(tabuleiro)
 
-  def matrix(self):
-    vetor = []
-    for i in range(3):
-      x = []
-      for j in range(3):
-        x.append("")
-      vetor.append(x)
-    return vetor
+        if verificar_vitoria(tabuleiro):
+            print(f"O jogador {jogador_atual} venceu!")
+            break
 
-  def draw(self):
-    """
-    Imprime o tabuleiro.
-    """
-    print("   1  2  3")
-    print("  -----------")
-    for i in range(3):
-      print("{} | {} | {}".format(self.tabuleiro[i][0], self.tabuleiro[i][1], self.tabuleiro[i][2]))
-      print("  -----------")
+        movimento_x, movimento_y = obter_movimento(jogador_atual,tabuleiro)
+        colocar_símbolo(tabuleiro, movimento_x, movimento_y, jogador_atual)
 
-  def verifica_vencedor(self):
-    """
-    Verifica se houve vencedor.
+        jogador_atual = "o" if jogador_atual == "x" else "x"
 
-    Returns:
-    O jogador vencedor, caso haja, ou `None`.
-    """
+
+def desenhar_tabuleiro(tabuleiro):
+    for linha in tabuleiro:
+        print(linha)
+
+
+def obter_movimento(jogador_atual,tabuleiro):
+    while True:
+        movimento_x = input("Digite a coluna (1-3): ")
+        movimento_y = input("Digite a linha (1-3): ")
+
+        movimento_x = int(movimento_x) - 1
+        movimento_y = int(movimento_y) - 1
+
+        if movimento_x < 0 or movimento_x > 2 or movimento_y < 0 or movimento_y > 2:
+            print("Movimento inválido. Tente novamente.")
+        elif tabuleiro[movimento_x][movimento_y] != "":
+            print("Posição ocupada. Tente novamente.")
+        else:
+            return movimento_x, movimento_y
+
+
+def colocar_símbolo(tabuleiro, movimento_x, movimento_y, jogador_atual):
+    tabuleiro[movimento_x][movimento_y] = jogador_atual
+
+
+def verificar_vitoria(tabuleiro):
     for linha in range(3):
-      if self.tabuleiro[linha][0] == self.tabuleiro[linha][1] == self.tabuleiro[linha][2] != " ":
-        return self.tabuleiro[linha][0]
+        if tabuleiro[linha][0] == tabuleiro[linha][1] == tabuleiro[linha][2] != "":
+            return True
 
     for coluna in range(3):
-      if self.tabuleiro[0][coluna] == self.tabuleiro[1][coluna] == self.tabuleiro[2][coluna] != " ":
-        return self.tabuleiro[0][coluna]
+        if tabuleiro[0][coluna] == tabuleiro[1][coluna] == tabuleiro[2][coluna] != "":
+            return True
 
-    if self.tabuleiro[0][0] == self.tabuleiro[1][1] == self.tabuleiro[2][2] != " ":
-      return self.tabuleiro[0][0]
-    elif self.tabuleiro[0][2] == self.tabuleiro[1][1] == self.tabuleiro[2][0] != " ":
-      return self.tabuleiro[0][2]
+    if tabuleiro[0][0] == tabuleiro[1][1] == tabuleiro[2][2] != "":
+        return True
 
-    return None
+    if tabuleiro[2][0] == tabuleiro[1][1] == tabuleiro[0][2] != "":
+        return True
 
-  def jogar(self, linha, coluna):
-    """
-    Faz uma jogada.
-
-    Args:
-      linha: A linha da jogada.
-      coluna: A coluna da jogada.
-    """
-    if self.tabuleiro[linha][coluna] != " ":
-      return False
-
-    self.tabuleiro[linha][coluna] = self.jogadoratual
-    self.jogadoratual = "X" if self.jogadoratual == "O" else "O"
-    return True
-
-  def fim_de_jogo(self):
-    """
-    Verifica se o jogo terminou.
-
-    Returns:
-    `True` se o jogo terminou, `False` caso contrário.
-    """
-    vencedor = self.verifica_vencedor()
-    if vencedor is not None:
-      return True
-
-    for linha in range(3):
-      for coluna in range(3):
-        if self.tabuleiro[linha][coluna] == " ":
-          return False
-
-    return True
-
-  def main(self):
-    """
-    Programa principal.
-    """
-    while True:
-      self.draw()
-
-      # Solicita a jogada do jogador atual
-      self.jogada()
-
-      # Verifica se o jogo terminou
-      if self.fim_de_jogo():
-        break
-
-      vencedor = self.verifica_vencedor()
-      if vencedor:
-        print("O jogador {} venceu!".format(vencedor))
-        break
+    return False
 
 
-if __name__ == "__main__":
-  teste = JogoDaVelha()
-  teste.main()
+jogar()
